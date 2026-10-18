@@ -1,0 +1,59 @@
+{
+  "mode": "PAPER_ONLY",
+  "capital": 200000,
+  "risk_per_trade_pct": 0.5,
+  "daily_loss_pct": 1.0,
+  "weekly_loss_pct": 3.0,
+  "max_drawdown_pct": 6.0,
+  "max_trades_per_day": 2,
+  "max_consecutive_losses": 2,
+  "cost_reserve_per_unit": 2.0,
+  "fee_estimate_per_round_trip": 80.0,
+  "max_spread_pct": 1.0,
+  "min_abs_delta": 0.45,
+  "max_abs_delta": 0.65,
+  "max_iv_percentile": 80,
+  "max_theta_decay_fraction_of_risk": 0.25,
+  "expected_holding_minutes": 30,
+  "min_days_to_expiry": 1,
+  "max_quote_age_seconds": 20,
+  "stop_loss_pct": 15.0,
+  "target_reward_risk": 1.5,
+  "max_hold_minutes": 45,
+  "entry_start_ist": "09:30",
+  "entry_end_ist": "14:15",
+  "square_off_ist": "15:15",
+  "poll_seconds": 5,
+  "chain_refresh_seconds": 20,
+  "indices": {
+    "NIFTY": {
+      "underlying_id": 13,
+      "lot_size": 65
+    },
+    "BANKNIFTY": {
+      "underlying_id": 25,
+      "lot_size": 30
+    }
+  },
+  "loss_cooldown_minutes": 60,
+  "entry_cooldown_minutes": 30,
+  "max_trades_per_index_per_day": 1,
+  "signal_timeframe_minutes": 5,
+  "trend_timeframe_minutes": 15,
+  "execution_timeframe_minutes": 1,
+  "entry_windows_ist": [
+    [
+      "09:45",
+      "11:15"
+    ],
+    [
+      "13:30",
+      "14:15"
+    ]
+  ],
+  "max_event_calendar_age_days": 0,
+  "min_option_premium": 30,
+  "max_option_premium": 700,
+  "target_abs_delta": 0.55,
+  "max_atm_strike_distance_pct": 1.0
+}

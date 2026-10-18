@@ -1,0 +1,16 @@
+{
+  "status": "ESTIMATES_ONLY_VERIFY_AGAINST_DHAN_CONTRACT_NOTES",
+  "effective_from": "2026-04-01",
+  "rates": {
+    "brokerage_per_order": 20.0,
+    "stt_sell": 0.0015,
+    "exchange_txn": 0.0003553,
+    "sebi_turnover": 0.000001,
+    "stamp_buy": 0.00003,
+    "gst": 0.18,
+    "ipft_turnover": 0.0,
+    "slippage_bps": 15.0,
+    "assumed_full_spread_bps": 50.0,
+    "fixed_impact_per_unit": 0.05
+  }
+}

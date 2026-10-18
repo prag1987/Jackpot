@@ -1,0 +1,25 @@
+services:
+  dashboard:
+    build: .
+    restart: unless-stopped
+    ports: ["127.0.0.1:8501:8501"]
+    env_file: .env
+    environment:
+      CG_DATA_DIR: /app/data
+    volumes:
+      - paperdata:/app/data
+      - marketdata:/app/marketdata
+  worker:
+    build: .
+    restart: unless-stopped
+    profiles: ["dhan-read-only"]
+    command: ["python", "worker.py"]
+    env_file: .env
+    environment:
+      CG_DATA_DIR: /app/data
+    volumes:
+      - paperdata:/app/data
+      - marketdata:/app/marketdata
+volumes:
+  paperdata:
+  marketdata:

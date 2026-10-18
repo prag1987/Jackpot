@@ -1,0 +1,6 @@
+{
+  "verified_through": "2026-10-17",
+  "timezone": "Asia/Kolkata",
+  "events": [],
+  "instructions": "FAIL-CLOSED. Update verified_through only after checking official RBI, NSE and economic calendars. Enter scheduled event blackouts with date/start/end and reason. Empty events alone does not imply a verified day."
+}
