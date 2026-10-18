@@ -18,8 +18,10 @@ apt-get install -y docker.io docker-compose-v2 git caddy openssl
 usermod -aG docker ubuntu
 
 # Oracle images block everything but SSH in iptables
-iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+# insert ABOVE the image's REJECT rule
+POS=$(iptables -L INPUT --line-numbers -n | awk '$2=="REJECT"{print $1; exit}'); POS=${POS:-1}
+iptables -I INPUT "$POS" -m state --state NEW -p tcp --dport 443 -j ACCEPT
+iptables -I INPUT "$POS" -m state --state NEW -p tcp --dport 80 -j ACCEPT
 netfilter-persistent save || true
 
 [ -d /opt/jackpot ] || git clone -b live-trading https://github.com/prag1987/Jackpot.git /opt/jackpot
