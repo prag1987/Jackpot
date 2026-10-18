@@ -55,5 +55,8 @@
   "min_option_premium": 30,
   "max_option_premium": 700,
   "target_abs_delta": 0.55,
-  "max_atm_strike_distance_pct": 1.0
+  "max_atm_strike_distance_pct": 1.0,
+  "min_paper_sessions": 30,
+  "entry_fill_timeout_seconds": 45,
+  "candle_refresh_seconds": 60
 }

@@ -1,5 +1,5 @@
-"""Paper-only autonomous decision gate. Signals require externally refreshed CLOSED 5m candles.
-No Dhan order methods or LIVE trade switch exist in this module.
+"""Autonomous decision gate. Signals require fresh CLOSED 5m candles (see candle_feed.py).
+This module never talks to the broker; live_engine.py executes SANDBOX/LIVE decisions.
 """
 import json
 from pathlib import Path
@@ -32,14 +32,13 @@ def load_closed_candles(index_name, stamp, path=None):
     except (OSError,KeyError,ValueError,TypeError) as ex:
         return None,'Invalid candles: '+type(ex).__name__
 
-def autopilot_paper_cycle(db,cfg,rows,stamp=None,candle_loader=load_closed_candles):
-    stamp=stamp or now()
-    if state(db,'autopilot','0')!='1':return 'OFF'
+def decide(db,cfg,rows,stamp,candle_loader=load_closed_candles):
+    """Shared signal step for PAPER, SANDBOX and LIVE.
+
+    Returns (None, 'NO_TRADE: reasons') or ((index_name, side, ranked_choice), 'SIGNAL').
+    `db` is the database whose positions/halt/caps apply (paper.db or live.db)."""
     reason=can_enter(db,cfg,stamp)
-    if reason:
-        put_state(db,'autopilot_last_decision','NO_TRADE: '+reason)
-        return 'NO_TRADE: '+reason
-    # Check BOTH indices, choose one best eligible contract, never multiple positions.
+    if reason:return None,'NO_TRADE: '+reason
     candidates=[];reasons=[]
     for index_name in ('NIFTY','BANKNIFTY'):
         candles,error=candle_loader(index_name,stamp)
@@ -58,11 +57,18 @@ def autopilot_paper_cycle(db,cfg,rows,stamp=None,candle_loader=load_closed_candl
         if ranked:
             candidates.append((ranked[0]['score'],index_name,side,ranked[0]))
         else:reasons.append(index_name+': no eligible strike')
-    if not candidates:
-        msg='NO_TRADE: '+'; '.join(reasons)
+    if not candidates:return None,'NO_TRADE: '+'; '.join(reasons)
+    _,idx,side,choice=max(candidates,key=lambda x:x[0])
+    return (idx,side,choice),'SIGNAL'
+
+def autopilot_paper_cycle(db,cfg,rows,stamp=None,candle_loader=load_closed_candles):
+    stamp=stamp or now()
+    if state(db,'autopilot','0')!='1':return 'OFF'
+    pick,msg=decide(db,cfg,rows,stamp,candle_loader)
+    if pick is None:
         put_state(db,'autopilot_last_decision',msg)
         return msg
-    _,idx,side,choice=max(candidates,key=lambda x:x[0])
+    idx,side,choice=pick
     # Idempotence: one signal per closed 5m bar + instrument, independent of worker retries.
     stamp_key=stamp.strftime('%Y-%m-%d %H:%M')
     fingerprint=f'{stamp_key}|{idx}|{side}|{choice["row"]["security_id"]}'

@@ -1,21 +1,23 @@
 services:
   dashboard:
     build: .
+    environment:
+      TZ: Asia/Kolkata
+      CG_DATA_DIR: /app/data
     restart: unless-stopped
     ports: ["127.0.0.1:8501:8501"]
     env_file: .env
-    environment:
-      CG_DATA_DIR: /app/data
     volumes:
       - paperdata:/app/data
       - marketdata:/app/marketdata
   worker:
     build: .
     restart: unless-stopped
-    profiles: ["dhan-read-only"]
+    profiles: ["dhan-read-only", "trading"]
     command: ["python", "worker.py"]
     env_file: .env
     environment:
+      TZ: Asia/Kolkata
       CG_DATA_DIR: /app/data
     volumes:
       - paperdata:/app/data

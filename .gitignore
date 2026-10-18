@@ -1,0 +1,13 @@
+# secrets — never commit
+.env
+*.env
+!.env.example
+# runtime data
+data/
+*.db
+*.sqlite
+marketdata/
+historical_data/
+__pycache__/
+.pytest_cache/
+.venv/

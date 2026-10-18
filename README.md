@@ -1,6 +1,18 @@
 # Capital Guard AI — DhanHQ Paper Research Repository
 
-**State: PAPER-ONLY research MVP, not validated profitable trading or production auto-trading.** ₹200,000 starting capital. No live order placement endpoints anywhere in this project.
+**State: research MVP with optional SANDBOX/LIVE Dhan execution (V9). No validated profitable edge.** Default mode is PAPER. LIVE needs `CG_ALLOW_LIVE=YES`, a whitelisted static IP, dashboard confirmation and your chosen number of completed paper sessions. Hindi deployment guide: [DEPLOY_VPS_HINDI.md](DEPLOY_VPS_HINDI.md).
+
+## V9: SANDBOX / LIVE execution
+
+- `live_broker.py` — Dhan adapter: super order entry (LIMIT buy + broker-side SL + target), order/position lookup, targeted exit, exit-all, kill switch, P&L exit. Order writes are never auto-retried; lookups use `correlationId`.
+- `live_engine.py` — gates (`CG_ALLOW_LIVE`, static IP, `min_paper_sessions`), entry recording before send, reconciliation, time exit / 15:15 square-off (cancel legs first, then market sell), daily broker-side loss guard, kill switch.
+- `candle_feed.py` — fetches completed 5-minute index candles from Dhan `/charts/intraday` for the autopilot.
+- `notify.py` — optional Telegram alerts.
+- Dashboard tab **🔴 Live trading**: mode switch, session requirement (user-set, 0–1000), gate status, autopilot, kill switch, trades. **Risk & logs** tab edits the event calendar in the data volume.
+- Separate databases: `paper.db`, `sandbox.db`, `live.db`.
+- Run: `docker compose --profile trading up -d --build`.
+
+Fixed in V9: worker stored chain timestamps as datetime objects, which crashed every market-hours cycle.
 
 ## What runs
 - Read-only DhanHQ option-chain and expiry polling (`worker.py`, requires credentials)

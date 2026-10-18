@@ -174,9 +174,14 @@ def mark_and_exit(db, quotes,stamp,cfg):
                        (stamp.isoformat(),bid,pnl,reason,pos['id']));db.commit()
             log(db,'PAPER_EXIT',f"{pos['index_name']} {pos['side']} PnL={pnl:.2f} {reason}")
 
+def calendar_file():
+    """Dashboard-maintained copy in the data volume wins over the one baked into the image."""
+    live=Path(os.getenv('CG_DATA_DIR',str(ROOT/'data')))/'event_calendar.json'
+    return live if live.exists() else ROOT/'event_calendar.json'
+
 def event_exclusion(stamp, calendar_path=None):
     """Fail closed: a missing/unverified event calendar blocks new paper entries."""
-    path=Path(calendar_path) if calendar_path else ROOT/'event_calendar.json'
+    path=Path(calendar_path) if calendar_path else calendar_file()
     try:
         data=json.loads(path.read_text())
         verified=date.fromisoformat(data['verified_through'])
